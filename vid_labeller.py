@@ -19,8 +19,8 @@ window = tk.Tk()
 window.withdraw()
 window.lift()
 #input dialog
-root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos ex. for windows: C:\\Users\\klavs\\Desktop ex. for Linux ")
-#root_dir = "C:\\Users\\klavs\\Desktop"
+#root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos")
+root_dir = "C:\\Users\\klavs\\Desktop"
 
 frame_count = 0
 
@@ -131,7 +131,8 @@ for filename in os.listdir(root_dir):
                     continue
                 
             if key == ord('a'):
-                frame_nr -= 3
+                if frame_nr>3:    
+                    frame_nr -= 3
                 continue
                 
             if key == ord('s'):

@@ -19,6 +19,7 @@ This is the repository storing manual for video labelling tool.
 - Execute script `vid_labeller.py` from Spyder. 
 
 ## Labelling
+- Input root directory of videos, ex. `C:\\Users\\klavs\\Desktop\\emo2018videos` for Windows ir `/home/icv/Desktop/emo2018videos` for Linux systems.
 - Input unlabelled subject name ex. 1334, 1337, ... , 1338. List of labeled subjects can be seen [here]().
 - For each video make on framestamp at start of emotion and one stamp and the end of emotion.
 Each video contains emotion, if multiple emotions take first emotion start stop, if no visible emotion then..., etcetcetcetc.

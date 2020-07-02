@@ -20,9 +20,11 @@ window.withdraw()
 window.lift()
 #input dialog
 #root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos")
-root_dir = "C:\\Users\\klavs\\Desktop"
+root_dir = "C:\\Users\\klavs\\Desktop\\1344"
 
 frame_count = 0
+
+start = time.time()
 
 #reading all the videoframes into the list
 def read_all_video_frames (vid_path):
@@ -84,23 +86,51 @@ total_vid_nr = 0
 frame_nr = 0
 framestamp1 = 0
 framestamp2 = 0
+video_emotion = ""
 
 for filename in os.listdir(root_dir):
      if filename.startswith(str(subject)) and filename.endswith(".mp4"):
          total_vid_nr += 1
+     if filename.startswith(str(subject)) and filename.endswith(".mp4") and os.path.exists(os.path.join(root_dir,filename[:-4]+".txt")):
+         completed_vid_nr += 1
          
 for filename in os.listdir(root_dir):
-    if filename.startswith(str(subject)) and filename.endswith(".mp4"):
-        completed_vid_nr += 1
+    if (filename.startswith(str(subject)) and filename.endswith(".mp4")) and not os.path.exists(os.path.join(root_dir,filename[:-4]+".txt")):
         #resetting vid specific values
         framestamp_nr = 1
+        frame_nr = 0
+        framestamp1 = 0
+        framestamp2 = 0
         cv2.destroyAllWindows()
         #reading video
         full_path = str(os.path.join(root_dir, filename))
-        vid_frames = read_all_video_frames(full_path)
+        vid_frames = read_all_video_frames(full_path)        
         print(len(vid_frames))
         
-        #TODO ADD ON-DISPLAY INSTRUCTIONS
+        #TODO Add different emotions based on codes
+        print(filename[-6:-5])
+        if "1" in filename[-6:-5]:
+            video_emotion = "Disgust"
+            
+        if "2" in filename[-6:-5]:
+            video_emotion = "Surprise"
+
+        if "3" in filename[-6:-5]:
+            video_emotion = "Sadness"
+
+        if "4" in filename[-6:-5]:
+            video_emotion = "Anger"
+
+        if "5" in filename[-6:-5]:
+            video_emotion = "Fear"
+
+        if "6" in filename[-6:-5]:
+            video_emotion = "Neutral"
+
+        if "7" in filename[-6:-]:
+            video_emotion = "Happiness"
+        
+           
         while True:
             #showing the display
             frame = vid_frames[frame_nr]
@@ -108,16 +138,17 @@ for filename in os.listdir(root_dir):
             cv2.namedWindow(filename, cv2.WINDOW_AUTOSIZE)
             
             #legends
-            cv2.putText(frame,"Forward d", (900,30), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-            cv2.putText(frame,"Backward a", (900,60), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-            cv2.putText(frame,"Framestamp s", (900,90), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-            cv2.putText(frame,"Save press e", (900,120), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-            cv2.putText(frame,"Quit press q", (900,150), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-            cv2.putText(frame,"Reset w", (900,180), 1, 1, (0,255,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Forward d", (900,30), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Backward a", (900,60), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Framestamp s", (900,90), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Save press e", (900,120), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Quit press q", (900,150), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+            cv2.putText(frame,"Reset w", (900,180), 1, 1, (255,0,0), 1, cv2.LINE_AA)
             
             #variables
             cv2.putText(frame,"Frame_nr: "+str(frame_nr), (10,50), 0, 1, (0,0,255), 2, cv2.LINE_AA)
-            cv2.putText(frame,"Framepoints listed: "+str(framestamp_nr-1)+" "+"Frame: "+str(framestamp1)+" "+"and "+str(framestamp2)+" "+"Videos completed "+str(completed_vid_nr-1)+"/"+str(total_vid_nr), (300,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)   
+            cv2.putText(frame,"Emotion: "+str(video_emotion), (10,100), 0, 1, (0,0,255), 2, cv2.LINE_AA)
+            cv2.putText(frame,"Framepoints listed: "+str(framestamp_nr)+" "+"Frame: "+str(framestamp1)+" "+"and "+str(framestamp2)+" "+"Videos completed "+str(completed_vid_nr-1)+"/"+str(total_vid_nr), (300,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)   
             cv2.imshow(filename, frame)
             
             #waiting till the key press
@@ -126,9 +157,28 @@ for filename in os.listdir(root_dir):
             #nav right/left/framestamp/restart
             if key == ord('d'):
                 print(frame_nr)
-                if frame_nr < len(vid_frames):
+                if frame_nr < len(vid_frames)-6:
                     frame_nr += 3
                     continue
+                else:
+                    if framestamp_nr  == 3:
+                        completed_vid_nr += 1
+                        if framestamp2>=framestamp1:                    
+                            with open (full_path[:-4]+'.txt','w+') as label_file:
+                                label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\n")
+                                #label_file.write("{}\t{}".format(framestamp1, framestamp2))
+                                label_file.close()
+                            
+                        if framestamp1>framestamp2:                    
+                            with open (full_path[:-4]+'.txt','w+') as label_file:
+                                label_file.write(str(framestamp2)+"\t"+str(framestamp1)+"\n")
+                                #label_file.write("{}\t{}".format(framestamp2, framestamp1))     
+                                label_file.close()
+                        
+                        print("Label file saved succesfully!")
+                        print("{}\t{}".format(framestamp1, framestamp2))
+                        cv2.destroyAllWindows()
+                        break
                 
             if key == ord('a'):
                 if frame_nr>3:    
@@ -140,6 +190,7 @@ for filename in os.listdir(root_dir):
                 
                 if framestamp_nr == 2:
                     framestamp2 = framestamp
+                    framestamp_nr += 1
                     print("Framestamp recorded")
                     time.sleep(0.1)
                     
@@ -163,11 +214,12 @@ for filename in os.listdir(root_dir):
                 break
             
             if key == ord('e'):
-                if framestamp_nr!=2:
+                if framestamp_nr!=3:
                     print("Please choose two frame points")
                     continue
                 
-                else:                    
+                else:
+                    completed_vid_nr += 1                       
                     if framestamp2>=framestamp1:                    
                         with open (full_path[:-4]+'.txt','w+') as label_file:
                             label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\n")
@@ -186,8 +238,9 @@ for filename in os.listdir(root_dir):
                     break
                 
             cv2.destroyAllWindows()
-
-                
+            
+            
+print("time it took: ", start - time.time())
                     
                     
                 

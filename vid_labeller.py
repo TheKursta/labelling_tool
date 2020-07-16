@@ -24,7 +24,7 @@ window.lift()
 #input dialog box for root folder of videos
 #root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos")
 #root_dir = "C:\\Users\\klavs\\Desktop\\1344"
-root_dir = "/home/icv/Desktop/test_fold"
+root_dir = "/home/icv/Desktop/1344_labelling"
 frame_count = 0
 
 files_iter = []
@@ -121,8 +121,10 @@ for i in range(0,len(files_iter)):
         
     if first_exec == False:
         vid_frames = future_vid.get()
-        full_path = str(os.path.join(root_dir, files_iter[i+1]))
-        future_vid = pool.apply_async(read_all_video_frames, args = (full_path,))        
+        print("The file now that is being labelled is", files_iter[i])
+        if i!=(len(files_iter)-1):            
+            full_path = str(os.path.join(root_dir, files_iter[i+1]))
+            future_vid = pool.apply_async(read_all_video_frames, args = (full_path,))        
         
     #setting video logic variables
     filename = files_iter[i]

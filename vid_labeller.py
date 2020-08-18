@@ -99,6 +99,7 @@ abnormal_limbs = 0
 heavy_occlusion = 0
 low_occlusion = 0
 non_correlating = 0
+other = 0
 video_emotion = ""
 
 
@@ -144,6 +145,7 @@ for i in range(0,len(files_iter)):
     heavy_occlusion = 0
     low_occlusion = 0
     non_correlating = 0
+    other = 0
     cv2.destroyAllWindows()
     
     #emotions based on the filename
@@ -192,7 +194,7 @@ for i in range(0,len(files_iter)):
         cv2.putText(frame,"Frame_nr: "+str(frame_nr), (10,50), 0, 1, (0,0,255), 2, cv2.LINE_AA)
         cv2.putText(frame,"Emotion: "+str(video_emotion), (10,100), 0, 1, (0,0,255), 2, cv2.LINE_AA)
         cv2.putText(frame,"Framepoints listed: "+str(framestamp_nr-1)+" Frame: "+str(framestamp1)+" and "+str(framestamp2)+" and "+str(framestamp3)+" Videos completed "+str(completed_vid_nr)+"/"+str(total_vid_nr), (150,680), 1, 1, (0,255,0), 1, cv2.LINE_AA)
-        cv2.putText(frame,"Non-corellating mark "+str(non_correlating)+" Abnormal limbs mark "+str(abnormal_limbs)+" Low-occlusion mark "+str(low_occlusion)+" Heavy-occlusion mark "+str(heavy_occlusion), (150,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Non-corellating mark "+str(non_correlating)+" Abnormal limbs mark "+str(abnormal_limbs)+" Low-occlusion mark "+str(low_occlusion)+" Heavy-occlusion mark "+str(heavy_occlusion)+" Other mark "+str(other), (150,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)
         cv2.imshow(filename, frame)
         
         #waiting till the key press
@@ -204,18 +206,19 @@ for i in range(0,len(files_iter)):
             if frame_nr < len(vid_frames)-6:
                 frame_nr += 3
                 continue
+            #save all marks if end of video is reached and all marks are present
             else:
-                if framestamp_nr  == 3:
+                if framestamp_nr  == 4:
                     completed_vid_nr += 1
                     if framestamp2>=framestamp1:                    
                         with open (full_path[:-4]+'.txt','w+') as label_file:
-                            label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\n")
+                            label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\t"+str(framestamp3)+"\t"+str(non_correlating)+"\t"+str(abnormal_limbs)+"\t"+str(low_occlusion)+"\t"+str(heavy_occlusion)+"\t"+str(other)+"\n")
                             #label_file.write("{}\t{}".format(framestamp1, framestamp2))
                             label_file.close()
                         
                     if framestamp1>framestamp2:                    
                         with open (full_path[:-4]+'.txt','w+') as label_file:
-                            label_file.write(str(framestamp2)+"\t"+str(framestamp1)+"\n")
+                            label_file.write(str(framestamp2)+"\t"+str(framestamp1)+"\t"+str(framestamp3)+"\t"+str(non_correlating)+"\t"+str(abnormal_limbs)+"\t"+str(low_occlusion)+"\t"+str(heavy_occlusion)+"\t"+str(other)+"\n")
                             #label_file.write("{}\t{}".format(framestamp2, framestamp1))     
                             label_file.close()
                     
@@ -233,7 +236,7 @@ for i in range(0,len(files_iter)):
             framestamp = frame_nr
             
             if framestamp_nr == 3:
-                framestamp1 = framestamp
+                framestamp3 = framestamp
                 framestamp_nr += 1
                 print("Framestamp recorded")  
                 time.sleep(0.1)  
@@ -261,29 +264,55 @@ for i in range(0,len(files_iter)):
             heavy_occlusion = 0
             low_occlusion = 0
             non_correlating = 0
+            other = 0
             continue
         
         if key == ord('q'):
             print("Goodbye friend!")
             cv2.destroyAllWindows()
             break
+        #mark key bindings
+        if key == ord('g'):
+            print("Non-correlating emotion!")
+            non_correlating = 1
+            continue
+
+        if key == ord('t'):
+            print("Abnormal limbs!")
+            abnormal_limbs = 1
+            continue
+        
+        if key == ord('u'):
+            print("Low-occlusion!")
+            low_occlusion = 1
+            continue
+        
+        if key == ord('p'):
+            print("Heavy-occlusion!")
+            heavy_occlusion = 1
+            continue
+
+        if key == ord('x'):
+            print("Other!")
+            other = 1
+            continue
         
         if key == ord('e'):
-            if framestamp_nr!=3:
-                print("Please choose two frame points")
+            if framestamp_nr!=4:
+                print("Please choose three frame points. Start/End/Middle")
                 continue
             
             else:
                 completed_vid_nr += 1                       
                 if framestamp2>=framestamp1:                    
                     with open (full_path[:-4]+'.txt','w+') as label_file:
-                        label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\n")
+                        label_file.write(str(framestamp1)+"\t"+str(framestamp2)+"\t"+str(framestamp3)+"\t"+str(non_correlating)+"\t"+str(abnormal_limbs)+"\t"+str(low_occlusion)+"\t"+str(heavy_occlusion)+"\t"+str(other)+"\n")
                         #label_file.write("{}\t{}".format(framestamp1, framestamp2))
                         label_file.close()
                     
                 if framestamp1>framestamp2:                    
                     with open (full_path[:-4]+'.txt','w+') as label_file:
-                        label_file.write(str(framestamp2)+"\t"+str(framestamp1)+"\n")
+                        label_file.write(str(framestamp2)+"\t"+str(framestamp1)+"\t"+str(framestamp3)+"\t"+str(non_correlating)+"\t"+str(abnormal_limbs)+"\t"+str(low_occlusion)+"\t"+str(heavy_occlusion)+"\t"+str(other)+"\n")
                         #label_file.write("{}\t{}".format(framestamp2, framestamp1))     
                         label_file.close()
                 

@@ -24,7 +24,9 @@ window.lift()
 #input dialog box for root folder of videos
 #root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos")
 #root_dir = "C:\\Users\\klavs\\Desktop\\1344"
-root_dir = "/home/icv/Desktop/1344_labelling"
+
+#path to root folder of all vids
+root_dir = "/home/icv/Desktop/1348_labelling"
 frame_count = 0
 
 files_iter = []
@@ -92,6 +94,11 @@ total_vid_nr = 0
 frame_nr = 0
 framestamp1 = 0
 framestamp2 = 0
+framestamp3 = 0
+abnormal_limbs = 0
+heavy_occlusion = 0
+low_occlusion = 0
+non_correlating = 0
 video_emotion = ""
 
 
@@ -132,6 +139,11 @@ for i in range(0,len(files_iter)):
     frame_nr = 0
     framestamp1 = 0
     framestamp2 = 0
+    framestamp3 = 0
+    abnormal_limbs = 0
+    heavy_occlusion = 0
+    low_occlusion = 0
+    non_correlating = 0
     cv2.destroyAllWindows()
     
     #emotions based on the filename
@@ -170,12 +182,17 @@ for i in range(0,len(files_iter)):
         cv2.putText(frame,"Framestamp s", (900,90), 1, 1, (255,0,0), 1, cv2.LINE_AA)
         cv2.putText(frame,"Save press e", (900,120), 1, 1, (255,0,0), 1, cv2.LINE_AA)
         cv2.putText(frame,"Quit press q", (900,150), 1, 1, (255,0,0), 1, cv2.LINE_AA)
-        cv2.putText(frame,"Reset w", (900,180), 1, 1, (255,0,0), 1, cv2.LINE_AA)
-        
+        cv2.putText(frame,"Reset marks w", (900,180), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Non correlating g", (800,210), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Abnormal limb behaviour t", (800,240), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Low-occlusion u", (800,270), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Heavy-occlusion p", (800,300), 1, 1, (255,0,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Other x", (900,330), 1, 1, (255,0,0), 1, cv2.LINE_AA)        
         #variables
         cv2.putText(frame,"Frame_nr: "+str(frame_nr), (10,50), 0, 1, (0,0,255), 2, cv2.LINE_AA)
         cv2.putText(frame,"Emotion: "+str(video_emotion), (10,100), 0, 1, (0,0,255), 2, cv2.LINE_AA)
-        cv2.putText(frame,"Framepoints listed: "+str(framestamp_nr-1)+" "+"Frame: "+str(framestamp1)+" "+"and "+str(framestamp2)+" "+"Videos completed "+str(completed_vid_nr)+"/"+str(total_vid_nr), (300,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)   
+        cv2.putText(frame,"Framepoints listed: "+str(framestamp_nr-1)+" Frame: "+str(framestamp1)+" and "+str(framestamp2)+" and "+str(framestamp3)+" Videos completed "+str(completed_vid_nr)+"/"+str(total_vid_nr), (150,680), 1, 1, (0,255,0), 1, cv2.LINE_AA)
+        cv2.putText(frame,"Non-corellating mark "+str(non_correlating)+" Abnormal limbs mark "+str(abnormal_limbs)+" Low-occlusion mark "+str(low_occlusion)+" Heavy-occlusion mark "+str(heavy_occlusion), (150,700), 1, 1, (0,255,0), 1, cv2.LINE_AA)
         cv2.imshow(filename, frame)
         
         #waiting till the key press
@@ -215,6 +232,12 @@ for i in range(0,len(files_iter)):
         if key == ord('s'):
             framestamp = frame_nr
             
+            if framestamp_nr == 3:
+                framestamp1 = framestamp
+                framestamp_nr += 1
+                print("Framestamp recorded")  
+                time.sleep(0.1)  
+                
             if framestamp_nr == 2:
                 framestamp2 = framestamp
                 framestamp_nr += 1
@@ -233,6 +256,11 @@ for i in range(0,len(files_iter)):
             framestamp_nr = 1
             framestamp1 = 0
             framestamp2 = 0
+            framestamp3 = 0
+            abnormal_limbs = 0
+            heavy_occlusion = 0
+            low_occlusion = 0
+            non_correlating = 0
             continue
         
         if key == ord('q'):

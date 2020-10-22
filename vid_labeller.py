@@ -23,10 +23,10 @@ window.lift()
 
 #input dialog box for root folder of videos
 #root_dir = simpledialog.askstring(title = " ", prompt = "Please enter the root directory of videos")
-#root_dir = "C:\\Users\\klavs\\Desktop\\1344"
+root_dir = "C:\\Users\\iCV\\Desktop\\wtf\\"
 
 #path to root folder of all vids
-root_dir = "/home/icv/Desktop/1348_labelling"
+#root_dir = "/home/icv/Desktop/1348_labelling"
 frame_count = 0
 
 files_iter = []
@@ -38,7 +38,7 @@ start = time.time()
 def read_all_video_frames (vid_path):
     frameslist = []
     frame_count = 0
-    print(vid_path)
+    print("Video pending in memory:",vid_path)
     # load video capture from file
     cap = cv2.VideoCapture(str(vid_path))
     
@@ -120,19 +120,20 @@ for i in range(0,len(files_iter)):
     if first_exec == True:
         full_path = str(os.path.join(root_dir, files_iter[i]))
         vid_frames = read_all_video_frames(full_path)        
-        print(len(vid_frames))
+        print("The file now that is being labelled is", files_iter[i],"Length of video is: ", print(len(vid_frames)))
         
         if len(files_iter)>=2:        
-            full_path = str(os.path.join(root_dir, files_iter[i+1]))
-            print(full_path)
-            future_vid = pool.apply_async(read_all_video_frames, args = (full_path,))
+            future_path = str(os.path.join(root_dir, files_iter[i+1]))
+            print(future_path)
+            future_vid = pool.apply_async(read_all_video_frames, args = (future_path,))
         
     if first_exec == False:
         vid_frames = future_vid.get()
-        print("The file now that is being labelled is", files_iter[i])
+        full_path = str(os.path.join(root_dir, files_iter[i]))
+        print("The file now that is being labelled is", files_iter[i],"Length of video is: ", print(len(vid_frames)))
         if i!=(len(files_iter)-1):            
-            full_path = str(os.path.join(root_dir, files_iter[i+1]))
-            future_vid = pool.apply_async(read_all_video_frames, args = (full_path,))        
+            future_path = str(os.path.join(root_dir, files_iter[i+1]))
+            future_vid = pool.apply_async(read_all_video_frames, args = (future_path,))        
         
     #setting video logic variables
     filename = files_iter[i]

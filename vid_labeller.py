@@ -169,7 +169,7 @@ for i in range(0,len(files_iter)):
     if "6" in filename[-6:-5]:
         video_emotion = "Neutral"
 
-    if "7" in filename[-6:-7]:
+    if "7" in filename[-6:-5]:
         video_emotion = "Happiness"
            
     while True:
